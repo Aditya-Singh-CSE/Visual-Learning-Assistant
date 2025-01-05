@@ -10,17 +10,32 @@ const LearningAssistant = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
+
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = stream;
+      // Try to request the environment (back) camera first
+      const envConstraints = { video: { facingMode: { exact: "environment" } } };
+      const envStream = await navigator.mediaDevices.getUserMedia(envConstraints);
+      videoRef.current.srcObject = envStream;
       setIsRecording(true);
       setError(null);
     } catch (err) {
-      console.error("Camera access error:", err);
-      setError("Failed to access camera");
+      console.warn("Cannot access back camera. Falling back to user camera:", err);
+      try {
+        // Now fallback to any available camera (usually the front camera)
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoRef.current.srcObject = fallbackStream;
+        setIsRecording(true);
+        setError(null);
+      } catch (fallbackErr) {
+        console.error("Camera access error (fallback):", fallbackErr);
+        setError("Failed to access camera");
+      }
     }
   };
+  
+  
+  
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
@@ -206,13 +221,13 @@ const LearningAssistant = () => {
         </div>
 
         <div className="w-[55%] mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="w-full aspect-video bg-black relative">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className="w-full h-full object-cover"
-            />
+        <div className="camera-container">
+  <video
+    ref={videoRef}
+    autoPlay
+    playsInline
+    className="w-full h-full object-cover"
+  />
             {!isRecording && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <Camera className="w-16 h-16 text-gray-400/50" />

@@ -67,3 +67,15 @@ body {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500;
   }
 } */ 
+
+/* styles.css */
+.camera-container {
+  @apply w-full aspect-video bg-black relative;
+}
+
+@media (max-width: 700px) {
+  .camera-container {
+    aspect-ratio: auto;
+    height: 440px; /* Or whatever taller height you want */
+  }
+}
