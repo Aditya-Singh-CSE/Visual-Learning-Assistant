@@ -10,20 +10,28 @@ const LearningAssistant = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-
   const startCamera = async () => {
     try {
       // Try to request the environment (back) camera first
-      const envConstraints = { video: { facingMode: { exact: "environment" } } };
-      const envStream = await navigator.mediaDevices.getUserMedia(envConstraints);
+      const envConstraints = {
+        video: { facingMode: { exact: "environment" } },
+      };
+      const envStream = await navigator.mediaDevices.getUserMedia(
+        envConstraints
+      );
       videoRef.current.srcObject = envStream;
       setIsRecording(true);
       setError(null);
     } catch (err) {
-      console.warn("Cannot access back camera. Falling back to user camera:", err);
+      console.warn(
+        "Cannot access back camera. Falling back to user camera:",
+        err
+      );
       try {
         // Now fallback to any available camera (usually the front camera)
-        const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
         videoRef.current.srcObject = fallbackStream;
         setIsRecording(true);
         setError(null);
@@ -33,9 +41,6 @@ const LearningAssistant = () => {
       }
     }
   };
-  
-  
-  
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
@@ -220,14 +225,14 @@ const LearningAssistant = () => {
           </p>
         </div>
 
-        <div className="w-[55%] mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="camera-container">
-  <video
-    ref={videoRef}
-    autoPlay
-    playsInline
-    className="w-full h-full object-cover"
-  />
+        <div className="camera-wrapper">
+          <div className="camera-container">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              className="w-full h-full object-cover"
+            />
             {!isRecording && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <Camera className="w-16 h-16 text-gray-400/50" />
@@ -239,9 +244,9 @@ const LearningAssistant = () => {
           <div className="w-full p-4 flex flex-col gap-4 items-center sm:flex-row sm:justify-center">
             {!isRecording ? (
               <button
-                onClick={startCamera}
-                className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-colors"
-              >
+              onClick={startCamera}
+              className="w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-colors"
+            >
                 <Camera className="w-5 h-5" />
                 Start Camera
               </button>

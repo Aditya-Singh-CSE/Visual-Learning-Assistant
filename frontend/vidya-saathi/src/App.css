@@ -73,9 +73,20 @@ body {
   @apply w-full aspect-video bg-black relative;
 }
 
+.camera-wrapper {
+  @apply w-[51%] mx-auto bg-white rounded-xl shadow-lg overflow-hidden;
+}
+
+@media (max-width: 600px) {
+  .camera-wrapper {
+    width: 80%;
+  }
+}
+
 @media (max-width: 700px) {
   .camera-container {
     aspect-ratio: auto;
-    height: 440px; /* Or whatever taller height you want */
+    height: 340px; /* Or whatever taller height you want */
+    width: auto;
   }
 }
