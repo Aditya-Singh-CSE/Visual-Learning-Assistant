@@ -1,0 +1,6 @@
+/frontend/vidya-saathi/node_modules
+/frontend/vidya-saathi/dist
+/frontend/vidya-saathi/dist-ssr
+/frontend/vidya-saathi/.env
+
+/server/config/config.json

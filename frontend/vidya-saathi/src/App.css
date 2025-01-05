@@ -1,0 +1,69 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reset default margins and ensure full width */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Ensure body takes full width */
+body {
+  width: 100vw;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove any max-width constraints from main containers */
+#root, #__next {
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+.custom-paragraph-spacing p {
+  letter-spacing: normal;
+  margin-bottom: 0.1rem;/* Adjust this value to control the spacing */
+}
+
+/* Import the specific font weights you need */
+/* @import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/noto-sans-devanagari/400.css';
+@import '@fontsource/noto-sans-devanagari/700.css'; */
+
+/* Custom base styles */
+/* @layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+/* Custom component styles */
+/* @layer components {
+  .btn-primary {
+    @apply px-6 py-3 rounded-full font-semibold text-white 
+           bg-gradient-to-r from-orange-500 to-pink-500
+           hover:from-orange-600 hover:to-pink-600
+           flex items-center gap-2 hover:shadow-lg transition-all;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6;
+  }
+} */
+
+/* Custom utilities */
+/* @layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500;
+  }
+} */ 
