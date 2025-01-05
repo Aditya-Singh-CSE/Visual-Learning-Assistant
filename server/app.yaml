@@ -6,6 +6,6 @@ handlers:
     secure: always
     script: auto
 env_variables:
-  PROJECT_ID: "bright-coyote-385507"
+  PROJECT_ID: seismic-monitor-388610
 
 app_engine_apis: true # or another supported version

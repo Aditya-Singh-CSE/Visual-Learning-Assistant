@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"vidya-saathi/internal/handler"
 
 	"vidya-saathi/config"
@@ -27,22 +28,38 @@ func main() {
 	// ---------------------------
 	// By default, the CORS middleware will allow all origins and headers:
 	//
-	app.Use(cors.New())
+	//p.Use(cors.New())
 
-	// app.Use(cors.New(cors.Config{
-	// 	AllowOrigins: "http://localhost:3000, https://example.com",
-	// 	AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",
-	// }))
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "https://jade-puppy-e1cab9.netlify.app/,http://localhost:5173",
+		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",
+		AllowHeaders: "Content-Type, Accept",
+	}))
 
 	// 4) Create your Gemini handler, passing in the config
 	geminiHandler := handler.NewGeminiHandler(cfg)
 
 	// 5) Register routes
 	app.Post("/generate-solution", geminiHandler.GenerateSolutionHandler)
+	app.Options("/generate-solution", geminiHandler.GenerateSolutionHandler)
 
+	// Readiness check endpoint
+	app.Get("/readiness", func(c *fiber.Ctx) error {
+		return c.SendStatus(fiber.StatusOK)
+	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port := 8080
+		//TBD check port
+		log.Print("defaulting to port ", port)
+
+	}
+
+	port = ":" + port
 	// 6) Start the server on the configured port
-	log.Printf("Starting server on %s", cfg.ServerPort)
-	if err := app.Listen(cfg.ServerPort); err != nil {
+	log.Printf("Starting server on %s", port)
+	if err := app.Listen(port); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }
