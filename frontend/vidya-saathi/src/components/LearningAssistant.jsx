@@ -49,6 +49,7 @@ const LearningAssistant = () => {
   };
 
   const solveQuestion = async () => {
+    speechSynthesis.cancel();
     try {
       setIsProcessing(true);
       setError(null);
@@ -63,9 +64,11 @@ const LearningAssistant = () => {
       const base64Data = imageData.split(",")[1];
 
       // =========================================
-      //  Send the base64 data to your Go backend
-      // =========================================
-      const backendUrl = "http://localhost:10002/generate-solution";
+      //  Send the base64 data to backend
+      const backendUrl =
+        "https://vidya-saathi-dot-seismic-monitor-388610.ue.r.appspot.com/generate-solution";
+      // const backendUrl = "http://localhost:58325/generate-solution";
+
       const response = await fetch(backendUrl, {
         method: "POST",
         headers: {
@@ -99,6 +102,17 @@ const LearningAssistant = () => {
       text = text.replace(/^\s*html\s*/i, ""); // Remove leading 'html' keyword if any
 
       setSolution(text);
+      text = text.replace(/<\/?[^>]+(>|$)/g, "");
+      text = text.replace(/style\s*=\s*["'][^"']*["']/g, ""); // Remove inline styles
+      text = text.replace(/class\s*=\s*["'][^"']*["']/g, ""); // Remove class attributes
+      text = text.replace(/id\s*=\s*["'][^"']*["']/g, ""); // Remove id attributes
+      // Create a temporary DOM element to parse the HTML
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = text;
+
+      // Extract the text content, which will strip out all HTML tags and attributes
+      text = tempDiv.textContent || tempDiv.innerText || "";
+      readSolutionAloud(text); // Read the solution aloud
     } catch (err) {
       console.error("Error processing image:", err);
       setError("Failed to process the question. Please try again.");
@@ -113,6 +127,44 @@ const LearningAssistant = () => {
     tracks?.forEach((track) => track.stop());
     videoRef.current.srcObject = null;
     setIsRecording(false);
+  };
+
+  // const readSolutionAloud = (text) => {
+  //   const utterance = new SpeechSynthesisUtterance(text);
+  //   speechSynthesis.speak(utterance);
+  // };
+
+  const readSolutionAloud = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = speechSynthesis.getVoices();
+
+    // Try to find a female voice from the list
+    // This is heuristic; each system has different voice names.
+    const femaleVoice = voices.find((voice) => {
+      const name = voice.name.toLowerCase();
+      // Check for 'female' or 'zira' (Windows) or 'samantha' (macOS) or 'google uk english female' ...
+      return (
+        name.includes("female") ||
+        name.includes("zira") ||
+        name.includes("samantha") ||
+        name.includes("eva") ||
+        name.includes("woman") ||
+        // Some 'locale' checks if needed:
+        voice.lang === "en-GB" || // might be female on Google UK
+        voice.lang === "en-US"
+      );
+    });
+
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
+    }
+
+    // Adjust pitch, rate, volume if desired
+    // utterance.pitch = 1.0;
+    // utterance.rate = 1.0;
+    // utterance.volume = 1.0;
+
+    speechSynthesis.speak(utterance);
   };
 
   return (
@@ -168,11 +220,12 @@ const LearningAssistant = () => {
             )}
           </div>
 
-          <div className="w-full p-4 flex justify-center gap-4">
+          {/* Responsive buttons container */}
+          <div className="w-full p-4 flex flex-col gap-4 items-center sm:flex-row sm:justify-center">
             {!isRecording ? (
               <button
                 onClick={startCamera}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-colors"
+                className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-colors"
               >
                 <Camera className="w-5 h-5" />
                 Start Camera
@@ -182,14 +235,34 @@ const LearningAssistant = () => {
                 <button
                   onClick={solveQuestion}
                   disabled={isProcessing}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
+                  className="w-full sm:w-auto 
+             bg-blue-500 hover:bg-blue-600 text-white 
+             px-6 py-2 
+             text-sm 
+             rounded-full 
+             font-semibold 
+             flex items-center justify-center gap-2 
+             transition-colors 
+             disabled:opacity-50 
+             whitespace-nowrap"
                 >
                   <Lightbulb className="w-5 h-5" />
                   {isProcessing ? "Processing..." : "Solve Question"}
                 </button>
+
                 <button
                   onClick={stopCamera}
-                  className="bg-gradient-to-r from-red-500 to-rose-500 text-white px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:shadow-lg transition-all"
+                  className="w-full sm:w-auto 
+                   bg-gradient-to-r from-red-500 to-rose-500 
+                   text-white 
+                   px-6 py-2 
+                   text-sm 
+                   rounded-full 
+                   font-semibold 
+                   flex items-center justify-center gap-2 
+                   hover:shadow-lg 
+                   transition-all 
+                   whitespace-nowrap"
                 >
                   Stop Camera
                 </button>
