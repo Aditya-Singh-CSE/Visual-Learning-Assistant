@@ -1,0 +1,11 @@
+service: vidya-saathi
+runtime: go121
+instance_class: F4
+handlers:
+  - url: /.*
+    secure: always
+    script: auto
+env_variables:
+  PROJECT_ID: "bright-coyote-385507"
+
+app_engine_apis: true # or another supported version
